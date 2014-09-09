@@ -5,15 +5,15 @@ class Directive:
     """Directives are instructions in the source file telling Snippety what to do.
     Directives can be nested within each other.
     """
-    def __init__(self, startline, options):
-        self.options = options
-        self.output_start_identifier = options.output_start_identifier
-        self.output_end_identifier = options.output_end_identifier
+    def __init__(self, startline, config):
+        self.config = config
+        self.output_start_identifier = config.output_start_identifier
+        self.output_end_identifier = config.output_end_identifier
 
         self.outter_directive = None
         self._items = []
 
-        parser = DirectiveParser(startline, options)
+        parser = DirectiveParser(startline, config)
         self.leading_whitespace = parser.leading_whitespace
         self._markers = parser.markers
         self._sequence = parser.sequence
@@ -47,18 +47,18 @@ class Directive:
         output_lines.append(self.leading_whitespace +
                 self.output_end_identifier + '\n')
 
-    #Fix: determine what to do from options. Also comment what it does.
+    #Fix: determine what to do from config. Also comment what it does.
     def _add_lines_before(self, output_lines):
         if self.outter_directive is None:
             output_lines.append(self.leading_whitespace +
-                    self.options.output_start_identifier +
+                    self.config.output_start_identifier +
                     '\n'
                     )
 
     def _add_lines_after(self, output_lines):
         if self.outter_directive is None:
             output_lines.append(self.leading_whitespace +
-                    self.options.output_start_identifier +
+                    self.config.output_start_identifier +
                     '\n'
                     )
 

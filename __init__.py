@@ -24,12 +24,12 @@ Ideas:
     Have a post processing function, which gets to read all the lines, and optionally cancel the output.
     Could use this to redirect to a different file, or modify the lines... Or collect all the import statements.
 
-    Don't pass snippety, but just it's configuration elements and options:
+    Don't pass snippety, but just it's configuration elements and config:
         collections
         place tags inline
 
 
-    Idea is that the config file only specifies the models and options.
+    Idea is that the config file only specifies the models and config.
 
 
 
@@ -49,8 +49,8 @@ To Do:
         Markers
         Directive
         MarkerSelector
-    Method for cascading options:
-        Options object:
+    Method for cascading config:
+        Config object:
             use_inline_markers_for_output
             marker_selector
             directive_start_identifier
@@ -82,12 +82,14 @@ Output control. Users will want to:
     b) Write just output to another file.
     c) Write everything to another file.
 
+Allow executing as code is marker text starts with $
 
 """
 import os
 
+from errors import DirectiveFormatError
 from markers import StandardMarker, IteratorMarker
-from options import SnippetyOptions
+from snippety_config import SnippetyConfig
 from marker_selector import MarkerSelector
 from source_file_processor import SourceFileProcessor
 from directive import Directive
@@ -99,13 +101,13 @@ class Snippety:
     The entry point to using Snippety. Provides access methods to process files.
     """
 
-    def __init__(self, options=None):
-        if options:
-            self.options = options
+    def __init__(self, config=None):
+        if config:
+            self.config = config
         else:
-            self.options = SnippetyOptions()
+            self.config = SnippetyConfig()
 
-    def process_dir(self, dirpath, include_list=None, ignore_list=None, options=None):
+    def process_dir(self, dirpath, include_list=None, ignore_list=None, config=None):
         """Process all files found in dirpath, applying filters from include and
         ignore, which must be lists like ['.py'] or ['.bak', '*/bin'] similar
         to git and hg ignore patterns.
@@ -130,17 +132,17 @@ class Snippety:
                         files_in.remove(filepath)
                         print "Ignoring ", filepath
                         continue
-        if options is None:
-            options = self.options
+        if config is None:
+            config = self.config
         for file in files_in:
-            self.process_file(file, options=options)
+            self.process_file(file, config=config)
 
-    def process_file(self, filepath, outpath=None, options=None):
+    def process_file(self, filepath, outpath=None, config=None):
         if not outpath:
             outpath = filepath
-        if options is None:
-            options = self.options
-        SourceFileProcessor(options).process_file(filepath)
+        if config is None:
+            config = self.config
+        SourceFileProcessor(config).process_file(filepath)
 
 
 def make_hashes(fields, rows):
@@ -162,12 +164,12 @@ def make_hashes(fields, rows):
 __all__ = [
         'Snippety',
         'make_hashes',
-        'SnippetyOptions',
+        'SnippetyConfig',
         'Directive',
         'DirectiveParser',
         'StandardMarker',
         'IteratorMarker',
-        'InstructionFormatException'
+        'DirectiveFormatError',
         ]
 
 if __name__ == "__main__":

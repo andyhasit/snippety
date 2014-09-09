@@ -1,17 +1,17 @@
 
 class SourceFileProcessor:
 
-    def __init__(self, options):
+    def __init__(self, config):
         self.snippety = snippety
         self._output_lines = []
         self._inside_directive = False
         self._inside_generated_section = False
         self._current_directive = None
-        self.output_start_identifier = options.output_start_identifier
-        self.output_end_identifier = options.output_end_identifier
-        self.directive_start_identifier = options.directive_start_identifier
-        self.directive_end_identifier = options.directive_end_identifier
-        self.directive_inline_identifier = options.directive_inline_identifier
+        self.output_start_identifier = config.output_start_identifier
+        self.output_end_identifier = config.output_end_identifier
+        self.directive_start_identifier = config.directive_start_identifier
+        self.directive_end_identifier = config.directive_end_identifier
+        self.directive_inline_identifier = config.directive_inline_identifier
 
     def process_file(self, filepath):
         """Extracts the lines and directives from a file and writes the output
@@ -58,7 +58,7 @@ class SourceFileProcessor:
                         self._start_directive(line)
                         self._end_current_directive(line)
 
-        #Fix, here call post-processing, and options for different files
+        #Fix, here call post-processing, and config for different files
         #Or check if file contents have changed...
         self._write_output(filepath)
 
@@ -83,7 +83,7 @@ class SourceFileProcessor:
 
     def _start_directive(self, line):
         assert self._line_is_directive_instruction(line)
-        new_directive = Directive(line, self._options)
+        new_directive = Directive(line, self._config)
         if self._current_directive:
             # We're within a directive, so nest it
             self._current_directive.add_item(new_directive)

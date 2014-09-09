@@ -18,6 +18,6 @@ class TestStandardMarker:
     def __test_raises_exception_if_not_iterable(self):
         marker = StandardMarker('x', 2)
         s1 = '  piggie says x '
-        #look up syntax and make sure it raises InstructionFormatException
+        #look up syntax and make sure it raises DirectiveFormatError
         #assert s2 == marker.transform_line(s1, 'hello')
 

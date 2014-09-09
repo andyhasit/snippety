@@ -24,7 +24,7 @@ class StandardMarker:
         elif isinstance(element, tuple) or isinstance(element, list):
             return line.replace(self._marker_text, element[self._marker_sequence])
         else:
-            raise InstructionFormatException('StandardMarker expects each element in the list to be strings or lists')
+            raise DirectiveFormatError('StandardMarker expects each element in the list to be strings or lists')
 
 class IteratorMarker(StandardMarker):
     """

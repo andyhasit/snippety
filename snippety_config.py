@@ -1,6 +1,10 @@
 
-class SnippetyOptions:
-    """An object for containing options."""
+from snippety import *
+
+class SnippetyConfig:
+    """An object for storing configuration elements.
+
+    """
 
     def __init__(self):
         self.directive_start_identifier = '#sn_s'

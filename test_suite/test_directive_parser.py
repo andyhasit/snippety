@@ -4,30 +4,50 @@ from snippety import *
 class TestDirectiveParser:
 
     def start_identifier(self):
-        return SnippetyOptions().directive_start_identifier
+        return SnippetyConfig().directive_start_identifier
 
     def inline_identifier(self):
-        return SnippetyOptions().directive_inline_identifier
+        return SnippetyConfig().directive_inline_identifier
 
-    def test_correct_number_of_items_extracted(self):
-        line = '   %s [x, y] bacon eggs spam' %  self.start_identifier()
-        whsp = '   '
-        parser = DirectiveParser(line, SnippetyOptions())
-        assert len(parser.markers) == 2
-        assert len(parser.sequence) == 3
-        assert whsp == parser.leading_whitespace
+class TestDirectiveParser_BasicTests(TestDirectiveParser):
 
     def test_leading_whitespace_spaces(self):
         whsp = '   '
         line = '%s%s [x, y] bacon eggs spam' %  (whsp, self.start_identifier())
-        parser = DirectiveParser(line, SnippetyOptions())
+        parser = DirectiveParser(line, SnippetyConfig())
         assert whsp == parser.leading_whitespace
 
     def test_leading_whitespace_tabs(self):
         whsp = '\t  \t'
         line = '%s%s [x, y] bacon eggs spam' %  (whsp, self.start_identifier())
-        parser = DirectiveParser(line, SnippetyOptions())
+        parser = DirectiveParser(line, SnippetyConfig())
         assert whsp == parser.leading_whitespace
+
+    def test_correct_number_of_markers_are_extracted_one(self):
+        line = '%s [x] bacon eggs spam' %  self.start_identifier()
+        parser = DirectiveParser(line, SnippetyConfig())
+        assert len(parser.markers) == 1
+
+    def test_correct_number_of_markers_are_extracted_two(self):
+        line = '%s [x, y] bacon eggs spam' %  self.start_identifier()
+        parser = DirectiveParser(line, SnippetyConfig())
+        assert len(parser.markers) == 2
+
+
+class TestDirectiveParser_SimpleSequence(TestDirectiveParser):
+
+    def test_correct_number_of_elements_are_extracted_one(self):
+        line = '%s [x] bacon' %  self.start_identifier()
+        parser = DirectiveParser(line, SnippetyConfig())
+        assert len(parser.sequence) == 1
+
+    def test_correct_number_of_elements_are_extracted_two(self):
+        line = '%s [x] bacon eggs' %  self.start_identifier()
+        parser = DirectiveParser(line, SnippetyConfig())
+        assert len(parser.sequence) == 2
+
+
+
 
         a = '''
                 self.leading_whitespace = parser.leading_whitespace
