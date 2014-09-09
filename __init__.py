@@ -61,7 +61,7 @@ To Do:
         get_output_path lambda
 
 
-    Maybe make MarkerSelector a function so it can be created annonymously?
+    Maybe make MarkerSelector a function so it can be created anonymously?
 
     Inline directives
     Inline outputs
@@ -71,13 +71,22 @@ To Do:
 
     User manual
     Pip
-    Init generates a template file to use.
+    As module:
+        --init: generates a template file to use
+        --tests: runs all tests
 
-    make_hash
+    In config, set type of prompt: shell or GUI
+
+Output control. Users will want to:
+    a) Write back to source file
+    b) Write just output to another file.
+    c) Write everything to another file.
+
 
 """
 
-from markers import *
+from markers import StandardMarker, IteratorMarker
+from options import SnippetyOptions
 from marker_selector import MarkerSelector
 from source_file_processor import SourceFileProcessor
 from directive import Directive
@@ -86,21 +95,24 @@ import os
 
 class Snippety:
     """
-    Stores the config and collections.
-    Provides access methods to process files.
+    The entry point to using Snippety. Provides access methods to process files.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, options=None):
+        if options:
+            self.options = options
+        else:
+            self.options = SnippetyOptions()
 
-    def process_dir(self, dirpath, include_list=None, ignore_list=None):
+    def process_dir(self, dirpath, include_list=None, ignore_list=None, options=None):
         """Process all files found in dirpath, applying filters from include and
         ignore, which must be lists like ['.py'] or ['.bak', '*/bin'] similar
         to git and hg ignore patterns.
         Ignore matching taking precedence.
         """
+
         from fnmatch import fnmatch
-        # fix:  Why "continue" ?
+        # fix:  Why do I have "continue" ? (Copied form internet)
         files_in = []
         for root, dirs, files in os.walk(self.source_dir):
             for filename in files:
@@ -117,15 +129,17 @@ class Snippety:
                         files_in.remove(filepath)
                         print "Ignoring ", filepath
                         continue
+        if options is None:
+            options = self.options
         for file in files_in:
-            self.process_file(file)
+            self.process_file(file, options=options)
 
-    def process_file(self, filepath, outpath=None):
-        # fix: refactor to use factory?
-        # Also send configuration elements
+    def process_file(self, filepath, outpath=None, options=None):
         if not outpath:
             outpath = filepath
-        SourceFileProcessor(self).process_file(filepath, outpath)
+        if options is None:
+            options = self.options
+        SourceFileProcessor(options).process_file(filepath)
 
 
 def make_hashes(fields, rows):
@@ -143,11 +157,18 @@ def make_hashes(fields, rows):
     return hashes
 
 
-
 class InstructionFormatException(Exception):
     pass
 
-__all__ = ['Snippety', 'make_hashes']
+__all__ = [
+        'Snippety',
+        'make_hashes',
+        'SnippetyOptions',
+        'Directive',
+        'StandardMarker',
+        'IteratorMarker',
+        'InstructionFormatException'
+        ]
 
 if __name__ == "__main__":
     import pytest

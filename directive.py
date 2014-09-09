@@ -4,16 +4,21 @@ class Directive:
     """Directives are instructions in the source file telling Snippety what to do.
     Directives can be nested within each other.
     """
-    def __init__(self, startline):
-        #need to parse instructions
-        self.directive_identifier = '#snip'
-        self.generated_code_start_identifier = '#snippety_generated_code_starts_here'
-        self.generated_code_end_identifier = '#snippety_generated_code_ends_here'
+    def __init__(self, startline, options):
+        self.options = options
+        self.output_start_identifier = options.output_start_identifier
+        self.output_end_identifier = options.output_end_identifier
+        self.directive_start_identifier = options.directive_start_identifier
+        self.directive_end_identifier = options.directive_end_identifier
+        self.directive_inline_identifier = options.directive_inline_identifier
+        #Fix: pass a function to this...
+        self._markerSelector = MarkerSelector()
+
         self.outter_directive = None
         self._items = []
+        self.leading_whitespace = ''
         self._markers = []
         self._sequence = []
-        self._markerSelector = MarkerSelector()
         #Fix, allow instruction lines to be added, maybe lazy parse
         self._parse_instruction_line(startline)
 
@@ -26,7 +31,7 @@ class Directive:
     def add_to_output_lines(self, output_lines):
         """Goes recursively through nested directives"""
         output_lines.append(self.leading_whitespace +
-                self.generated_code_start_identifier + '\n')
+                self.output_start_identifier + '\n')
 
         for element in self._sequence:
             for item in self._items:
@@ -40,9 +45,13 @@ class Directive:
                     output_lines.append(item)
 
         output_lines.append(self.leading_whitespace +
-                self.generated_code_end_identifier + '\n')
+                self.output_end_identifier + '\n')
 
     def _parse_instruction_line(self, line):
+        """
+        Change to process inlines
+        line.find(self.directive_inline_identifier)
+        """
         first_non_white_space = len(line) - len(line.lstrip())
         self.leading_whitespace = line[:first_non_white_space]
         instruction_text = line.strip()[len(self.directive_identifier):].strip()

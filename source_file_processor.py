@@ -1,32 +1,36 @@
 
 class SourceFileProcessor:
 
-    def __init__(self, snippety):
+    def __init__(self, options):
         self.snippety = snippety
         self._output_lines = []
         self._inside_directive = False
         self._inside_generated_section = False
         self._current_directive = None
-        # fix: pass these things in?
-        self.directive_identifier = '#snip'
-        #Fix : use #sn_start #sn_end #sn_ln
-        self.generated_code_start_identifier = '#snippety_generated_code_starts_here'
-        self.generated_code_end_identifier = '#snippety_generated_code_ends_here'
+        self.output_start_identifier = options.output_start_identifier
+        self.output_end_identifier = options.output_end_identifier
+        self.directive_start_identifier = options.directive_start_identifier
+        self.directive_end_identifier = options.directive_end_identifier
+        self.directive_inline_identifier = options.directive_inline_identifier
 
-    def process_file(self, filepath, outpath):
-        """Processes a single file:
-            Extracts
-
-        For now assumes single line directives
-        Refactor:
-            allow functions to determine line ends etc..
+    def process_file(self, filepath):
+        """Extracts the lines and directives from a file and writes the output
+        back to it.
         """
         for line in tuple(open(filepath, "r")):
+            # If inside a directive (i.e _current_directive not None)
+            # keep adding lines to that directive, unless it is start of new
+            # directive, in which case we create a neste directive.
+            # Once we've rolled back out of the nested directives, we call
+            # _apply_directives, which adds the to the output lines or directs
+            # To another file.
             if self._current_directive:
                 self._output_lines.append(line)
-                #Fix: do something here to cater for single-line directives
-                if self._line_is_directive_instruction(line):
+                if self._line_is_directive_start(line):
                     self._start_directive(line)
+                elif self._line_is_inline_directive(line):
+                    self._start_directive(line)
+                    self._end_current_directive(line)
                 elif self._line_is_directive_end(line):
                     self._end_current_directive(line)
                     #If reached end of outtermost directive, apply directives
@@ -35,43 +39,53 @@ class SourceFileProcessor:
                 else:
                     self._current_directive.add_item(line)
 
+            # If inside a generated section, do nothing other than check if
+            # we've reached the end
             elif self._inside_generated_section:
                 if self._line_is_generated_code_end(line):
                     self._inside_generated_section = False
+
+            # If we're in normal code (not inside a directive or generated
+            # section, we just check for starter of sections.
             else:
                 if self._line_is_generated_code_start(line):
                     self._inside_generated_section = True
                 else:
                     self._output_lines.append(line)
-                    if self._line_is_directive_instruction(line):
+                    if self._line_is_directive_start(line):
                         self._start_directive(line)
-        #Fix, here call post-processing, and check if output cancelled.
-        self._write_output(outpath)
+                    elif self._line_is_inline_directive(line):
+                        self._start_directive(line)
+                        self._end_current_directive(line)
 
-    def _line_is_directive_instruction(self, line):
-        #Fix: change to allow inline comments
+        #Fix, here call post-processing, and options for different files
+        #Or check if file contents have changed...
+        self._write_output(filepath)
+
+    def _line_is_directive_start(self, line):
         line = line.strip()
-        return line.startswith(self.directive_identifier) and \
-                not line == self.directive_identifier
+        return line.startswith(self.directive_start_identifier)
 
     def _line_is_directive_end(self, line):
         line = line.strip()
-        return line == self.directive_identifier
+        return line == self.directive_end_identifier
+
+    def _line_is_inline_directive(self, line):
+        return line.find(self.directive_inline_identifier)
 
     def _line_is_generated_code_start(self, line):
         line = line.strip()
-        return line == self.generated_code_start_identifier
+        return line == self.output_start_identifier
 
     def _line_is_generated_code_end(self, line):
         line = line.strip()
-        return line == self.generated_code_end_identifier
+        return line == self.output_end_identifier
 
     def _start_directive(self, line):
         assert self._line_is_directive_instruction(line)
-        new_directive = Directive(line)
-
+        new_directive = Directive(line, self._options)
         if self._current_directive:
-            # Within a directive, so nest it
+            # We're within a directive, so nest it
             self._current_directive.add_item(new_directive)
         else:
             # Not within directive, so set it as to outtermost
@@ -85,10 +99,14 @@ class SourceFileProcessor:
         self._current_directive = self._current_directive.outter_directive
 
     def _apply_directives(self):
+        """Adds the output generated by the directive to the
+        output line.
+        Fix: all pre and post processing, as well as output to other file.
+        """
         self._outtermost_directive.add_to_output_lines(self._output_lines)
         self._outtermost_directive = None
 
-    def _write_output(self, outpath):
-        file = open(outpath, 'w')
+    def _write_output(self, output_path):
+        file = open(output_path, 'w')
         file.writelines(self._output_lines)
         file.close()
