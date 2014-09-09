@@ -21,3 +21,30 @@ class TestStandardMarker:
         #look up syntax and make sure it raises DirectiveFormatError
         #assert s2 == marker.transform_line(s1, 'hello')
 
+class TestIteratorMarker:
+
+    def test_basic_case(self):
+        marker = IteratorMarker('x*3', 0)
+        in1 = '  piggie says x '
+        out1 = '  piggie says 3 '
+        in2 = '  piggie says x '
+        out2 = '  piggie says 4 '
+        assert out1 == marker.transform_line(in1, 'hello')
+        assert out2 == marker.transform_line(in2, 'hello')
+
+
+class TestKeyValueMarker:
+
+    def test_basic_case(self):
+        element = {'title':'age', 'type':'int'}
+        marker = KeyValueMarker('string > type', 0)
+        line = 'self.name as string'
+        out = 'self.name as int'
+        assert out == marker.transform_line(line, element)
+
+    def test_two_keys(self):
+        element = {'title':'age', 'type':'int'}
+        marker = KeyValueMarker('string > type', 0)
+        line = 'self.name as string'
+        out = 'self.name as int'
+        assert out == marker.transform_line(line, element)
