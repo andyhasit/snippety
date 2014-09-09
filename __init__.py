@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Snippety is a tool for generating source code from directives in your source code.
+Snippety repeats chunks of text
+
+ text below your text directives in your source code.
 
 So wrapping our "Piggie..." line with the start and end directives gives
 
@@ -40,13 +42,38 @@ Ideas:
 Add a collection parser utility, for people who prefer keeping it in files?
 can also add collections directly as hashes.
 
+http://pytest.org/latest/getting-started.html
+
 To Do:
-    Inline directives and outputs
-    Functionality to have inline comments
+    Create test suite for:
+        Markers
+        Directive
+        MarkerSelector
+    Method for cascading options:
+        Options object:
+            use_inline_markers_for_output
+            marker_selector
+            directive_start_identifier
+            directive_end_identifier
+            directive_inline_identifier
+        Passes from Snippety>FileProcessor>marker
+    Make it easy to direct to output files
+        get_output_path lambda
+
+
+    Maybe make MarkerSelector a function so it can be created annonymously?
+
+    Inline directives
+    Inline outputs
     Create KeyValueMarker, CapitalisedMarker
-    Create tests (see http://pytest.org/latest/getting-started.html)
-    What else does it need to export?
-    _parse_sequence
+    What else does __init__ need to export?
+    Complete _parse_sequence
+
+    User manual
+    Pip
+    Init generates a template file to use.
+
+    make_hash
 
 """
 
@@ -100,10 +127,27 @@ class Snippety:
             outpath = filepath
         SourceFileProcessor(self).process_file(filepath, outpath)
 
+
+def make_hashes(fields, rows):
+    """Returns a list of hashes.
+    >>> make_hash(['name', 'age'], [('Cathryn', 20), ('Leslie', 39)])
+    [{'name':'Cathryn', 'age':20}, {'name':'Leslie', 'age':39}]
+    """
+    hashes = []
+    for row in rows:
+        assert len(row) == len(fields)
+        h = {}
+        hashes.append(h)
+        for i, field in enumerate(fields):
+            h[field] = row[i]
+    return hashes
+
+
+
 class InstructionFormatException(Exception):
     pass
 
-__all__ = ['Snippety']
+__all__ = ['Snippety', 'make_hashes']
 
 if __name__ == "__main__":
     import pytest
