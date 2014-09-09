@@ -84,13 +84,14 @@ Output control. Users will want to:
 
 
 """
+import os
 
 from markers import StandardMarker, IteratorMarker
 from options import SnippetyOptions
 from marker_selector import MarkerSelector
 from source_file_processor import SourceFileProcessor
 from directive import Directive
-import os
+from directive_parser import DirectiveParser
 
 
 class Snippety:
@@ -157,14 +158,13 @@ def make_hashes(fields, rows):
     return hashes
 
 
-class InstructionFormatException(Exception):
-    pass
 
 __all__ = [
         'Snippety',
         'make_hashes',
         'SnippetyOptions',
         'Directive',
+        'DirectiveParser',
         'StandardMarker',
         'IteratorMarker',
         'InstructionFormatException'
