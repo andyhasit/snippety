@@ -2,3 +2,4 @@
 *.pyo
 __pycache__/
 Snippety.psproj
+copy to python libs.bat

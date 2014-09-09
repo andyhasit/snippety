@@ -11,9 +11,7 @@ class DirectiveParser:
         (sets, of) (tuple, of) (same, length) (as, markers)
         name_of_a_collection
         name_of_a_collection if some_field = some_value
-
-    filter_instruction
-
+        name_of_a_collection if some_field != some_value
     """
 
     def __init__(self, startline, config):
@@ -65,8 +63,8 @@ class DirectiveParser:
         elif inline_identifier_position >= 0:
             assert start_identifier_position == -1
             self.is_inline = True
-            self.first_line_without_directive = line[:inline_identifier_position].strip()
-            cut_point = len(self.inline_identifier_position) + inline_identifier_position
+            self.first_line_without_directive = line[:inline_identifier_position].rstrip()
+            cut_point = len(self.directive_inline_identifier) + inline_identifier_position
         self._instruction_text = line[cut_point:].strip()
 
     def _parse_instructions(self):
@@ -102,14 +100,34 @@ class DirectiveParser:
                     )
 
     def _parse_sequence(self):
-        """Parses the text, which must be one of:
-        - a set of words separated by spaces
-        - a set of bracketed sets: (height, float) (age, int)
-        - the name of a collection, optionally followed by contidional statements
+        """Parses the sequence text, which must be one of:
+                words separated by spaces
+                (sets, of) (tuple, of) (same, length) (as, markers)
+                name_of_a_collection
+                name_of_a_collection if some_field = some_value
+                name_of_a_collection if some_field != some_value
         """
         #fix check if first word is a member of collections
         text = self._sequence_text
         if text.startswith('('):
-            pass
+            raise Exception('not implemented yet')
+        elif text.startswith('/'):
+            words = text.split(' ')
+            collection_name = words[0][1:]
+            try:
+                collection = self.config.collections[collection_name]
+                if len(words) == 1:
+                    self.sequence = collection
+                elif len(words) == 4:
+                    raise Exception('not implemented yet')
+                else:
+                    raise DirectiveFormatError('Sequence must be composed of 1 or 4 words)')
+            except KeyError:
+                raise DirectiveFormatError('Collection "%s" not found in config.' \
+                         % collection_name)
         else:
             self.sequence = text.split(' ')
+
+
+
+

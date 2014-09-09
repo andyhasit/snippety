@@ -7,6 +7,7 @@ Markers are the items in [square brackets] inside a directive.
 
 When processing a directive, a MarkerSelector object is used to determine which marker to use.
 """
+from snippety import *
 
 class StandardMarker:
     """The basis marker.
@@ -26,22 +27,38 @@ class StandardMarker:
         else:
             raise DirectiveFormatError('StandardMarker expects each element in the list to be strings or lists')
 
+
 class IteratorMarker(StandardMarker):
     """
-    Replaces marker text with integers in increments of 1.
+    Replaces the marker with integers in increments of 1.
     Expects a string as "cnt*1"
     Ignores the sequence, and doesn't refer to the element.
     """
     def __init__(self, marker_text, marker_sequence):
         self._marker_sequence = marker_sequence
-        star = marker_text.find('*')
-        self._marker_text = marker_text[0:star]
-        self._count = int(marker_text[star + 1:])
+        symbol = marker_text.find('*')
+        self._marker_text = marker_text[0:symbol]
+        self._count = int(marker_text[symbol + 1:])
 
     def transform_line(self, line, element):
         new_line = line.replace(self._marker_text, str(self._count))
         self._count += 1
         return new_line
 
+
+class KeyValueMarker(StandardMarker):
+    """
+    Replaces the marker with the value of the specified field for the element
+    Ignores the sequence, and doesn't refer to the element.
+    """
+    def __init__(self, marker_text, marker_sequence):
+        self._marker_sequence = marker_sequence
+        symbol = marker_text.find('>')
+        self._marker_text = marker_text[0:symbol].strip()
+        self._field = marker_text[symbol + 1:].strip()
+
+    def transform_line(self, line, element):
+        field_value = element[self._field]
+        return line.replace(self._marker_text, field_value)
 
 
