@@ -1,4 +1,5 @@
 from snippety import *
+from snippety.test_suite import TestBase
 
 class TestDirective:
     def start_identifier(self):

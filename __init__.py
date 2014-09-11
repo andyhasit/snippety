@@ -96,35 +96,67 @@ class Snippety:
         else:
             self.config = SnippetyConfig()
 
-    def process_dir(self, dirpath, include_list=None, ignore_list=None, config=None):
+    def process_dir(self, dirpath, include=None, exclude=None, config=None):
         """Process all files found in dirpath, applying filters from include and
         ignore, which must be lists like ['.py'] or ['.bak', '*/bin'] similar
         to git and hg ignore patterns.
         Ignore matching taking precedence.
         """
 
+
+        if config is None:
+            config = self.config
+        for file in self.collect_files(dirpath, include, exclude):
+            self.process_file(file, config=config)
+
+    def collect_files(self, dirpath, include=None, exclude=None):
+        """Returns a list of files, as used by process_dir. You can use this to
+        check what files will be processed.
+
+        Parameters 'include' and 'exclude' can be None, or lists of fnmatch pattern
+        strings. (See python module fnmatch).
+
+
+        If 'include' is not specified, all files in dirpath and subdirectories
+        will be collected.
+        If 'include' is specified, only files which match any of those patterns
+        will be collected.
+        If 'exclude' is specified, files which match any of those patterns will be
+        removed from the list of files collected. Therefore 'exclude' overrides
+        'include'.
+
+        The match is relative to dirpath.
+        Example:
+
+        Find all .py files except those in dir 'test' directly under dirpath on
+        Unix/Linux operating system:
+
+            sn.collect_files(dirpath, include=['*.py'], exclude=['test/*'])
+
+        Find all .py files except those in dir 'bin' anywhere under dirpath, on
+        Windows operating system::
+
+            sn.collect_files(dirpath, include=['*.py'], exclude=['*\\bin\\*'])
+
+        """
         from fnmatch import fnmatch
-        # fix:  Why do I have "continue" ? (Copied form internet)
-        files_in = []
+        collected_files = []
         for root, dirs, files in os.walk(dirpath):
             for filename in files:
                 filepath = os.path.join(root, filename)
-                if include_list:
-                    if any(fnmatch(filename, pattern) for pattern in include_list):
-                        files_in.append(filepath)
-                        print "Including ", filepath
-                        continue
-                    else:
-                        files_in.append(filepath)
-                if ignore_list:
-                    if any(fnmatch(filename, pattern) for pattern in ignore_list):
-                        files_in.remove(filepath)
-                        print "Ignoring ", filepath
-                        continue
-        if config is None:
-            config = self.config
-        for file in files_in:
-            self.process_file(file, config=config)
+                reltive_dir = os.path.relpath(root, dirpath)
+                reltive_file_path = os.path.join(reltive_dir, filename)
+                if include:
+                    if any(fnmatch(reltive_file_path, pattern) for pattern in include):
+                        collected_files.append(filepath)
+                else:
+                    collected_files.append(filepath)
+                if exclude:
+                    if filepath in collected_files:
+                        if any(fnmatch(reltive_file_path, pattern) for pattern in exclude):
+                            collected_files.remove(filepath)
+        collected_files.sort()
+        return collected_files
 
     def process_file(self, filepath, config=None):
         if config is None:
