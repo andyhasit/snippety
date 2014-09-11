@@ -77,7 +77,7 @@ Ideas:
 import os
 
 # Order matters! http://python-notes.curiousefficiency.org/en/latest/python_concepts/import_traps.html
-from errors import DirectiveFormatError
+from errors import DirectiveFormatError, FileParsingError
 from markers import StandardMarker, IteratorMarker, KeyValueMarker
 from snippety_config import SnippetyConfig
 from directive_parser import DirectiveParser
@@ -106,7 +106,7 @@ class Snippety:
         from fnmatch import fnmatch
         # fix:  Why do I have "continue" ? (Copied form internet)
         files_in = []
-        for root, dirs, files in os.walk(self.source_dir):
+        for root, dirs, files in os.walk(dirpath):
             for filename in files:
                 filepath = os.path.join(root, filename)
                 if include_list:
@@ -134,12 +134,14 @@ class Snippety:
 __all__ = [
         'Snippety',
         'SnippetyConfig',
+        'SourceFileProcessor',
         'Directive',
         'DirectiveParser',
         'StandardMarker',
         'IteratorMarker',
         'KeyValueMarker',
         'DirectiveFormatError',
+        'FileParsingError',
         ]
 
 if __name__ == "__main__":

@@ -65,6 +65,10 @@ class DirectiveParser:
             self.is_inline = True
             self.first_line_without_directive = line[:inline_identifier_position].rstrip()
             cut_point = len(self.directive_inline_identifier) + inline_identifier_position
+        else:
+            raise DirectiveFormatError('The directive did not contain identifier (%s or %s): %s' % \
+                (self.directive_start_identifier, self.directive_inline_identifier, line))
+        print
         self._instruction_text = line[cut_point:].strip()
 
     def _parse_instructions(self):
@@ -127,7 +131,3 @@ class DirectiveParser:
                          % collection_name)
         else:
             self.sequence = text.split(' ')
-
-
-
-

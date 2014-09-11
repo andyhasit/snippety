@@ -1,6 +1,6 @@
 from snippety import *
 
-class TestDiretcive:
+class TestDirective:
     def start_identifier(self):
         return SnippetyConfig().directive_start_identifier
 
