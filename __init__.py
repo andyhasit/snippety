@@ -27,7 +27,7 @@ To Do:
     Find out if I can do def __init__(self, config=SnippetyConfig()):
     Save buffer prompt (In config, set type of prompt: shell or GUI)
     Create CapitalisedMarker * 2 using ~
-
+    printout saying what files were affected.
 
     Beef up test suite
     Check nested directives work
@@ -48,7 +48,7 @@ To Do:
     User manual
     Pip
     As module:
-        generate an example script to use
+        --eg: generate an example script to use
         --tests: runs all tests
         --help
         --version
@@ -97,13 +97,9 @@ class Snippety:
             self.config = SnippetyConfig()
 
     def process_dir(self, dirpath, include=None, exclude=None, config=None):
-        """Process all files found in dirpath, applying filters from include and
-        ignore, which must be lists like ['.py'] or ['.bak', '*/bin'] similar
-        to git and hg ignore patterns.
-        Ignore matching taking precedence.
+        """Process the list files returned by collect_files. Refer to collect_files
+        docstring for details on filtering.
         """
-
-
         if config is None:
             config = self.config
         for file in self.collect_files(dirpath, include, exclude):

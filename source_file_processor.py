@@ -23,7 +23,7 @@ class SourceFileProcessor:
             # _apply_directives, which adds the to the output lines or directs
             # To another file.
             self._current_line_number += 1
-            if self._current_directive:
+            if self._current_directive is not None:
                 self._output_lines.append(line)
                 if self._line_is_directive_start(line):
                     self._start_directive(line)
@@ -108,7 +108,6 @@ class SourceFileProcessor:
 
     def _write_output(self, output_path):
         self._write_to_file(output_path, self._output_lines)
-
 
     def _write_to_file(self, file, lines):
         f = open(file, 'w')
