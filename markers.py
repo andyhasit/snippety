@@ -31,7 +31,7 @@ class StandardMarker:
 class IteratorMarker(StandardMarker):
     """
     Replaces the marker with integers in increments of 1.
-    Expects a string as "cnt*1"
+    Expects a string as "cnt*1" or "x*2" or "0*1"
     Ignores the sequence, and doesn't refer to the element.
     """
     def __init__(self, marker_text, marker_sequence):
@@ -48,7 +48,8 @@ class IteratorMarker(StandardMarker):
 
 class KeyValueMarker(StandardMarker):
     """
-    Replaces the marker with the value of the specified field for the element
+    Replaces the marker with the value of the specified field for the element.
+    Expects a string as "x>y"
     Ignores the sequence, and doesn't refer to the element.
     """
     def __init__(self, marker_text, marker_sequence):
@@ -58,7 +59,14 @@ class KeyValueMarker(StandardMarker):
         self._field = marker_text[symbol + 1:].strip()
 
     def transform_line(self, line, element):
-        field_value = element[self._field]
-        return line.replace(self._marker_text, field_value)
+        if isinstance(element, dict):
+            field_value = element[self._field]
+            return line.replace(self._marker_text, field_value)
+        else:
+            raise DirectiveFormatError('KeyValueMarker expected a dict, but got a %s instead. \
+                Perhaps the sequence was not poperly declared.' % type(element))
+
+
+
 
 

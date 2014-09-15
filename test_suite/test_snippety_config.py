@@ -9,6 +9,22 @@ def test_add_collection():
                 ['dob', 'date'],
                 ['age', 'int']
             ])
+    config.add_collection('ConcordeOutputFields',
+	   ['name', 'FromDb'],
+		[
+			['ConcordeItemId', 'FromDb'],
+			['Quantity', 'FromDb'],
+			['Notes1', 'FromDbNullableString'],
+			['Notes2', 'FromDbNullableString'],
+			['CategoryOverride', 'FromDbNullableString'],
+			['CostPriceOverride', 'FromDb'],
+			['SalesPriceOverride', 'FromDb'],
+			['HoursOverride', 'FromDb'],
+			['PDSReferenceOverride', 'FromDbNullableString'],
+			['OrderClassification', 'FromDb'],
+			['DescriptionOverride', 'FromDbNullableString'],
+		]
+	)
     assert config.collections.has_key('person_fields')
     items = config.collections['person_fields']
     assert items[0] == {'title':'dob', 'type':'date'}

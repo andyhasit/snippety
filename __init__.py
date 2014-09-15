@@ -91,7 +91,7 @@ class Snippety:
     """
 
     def __init__(self, config=None):
-        if config:
+        if config is not None:
             self.config = config
         else:
             self.config = SnippetyConfig()
@@ -151,6 +151,8 @@ class Snippety:
                     if filepath in collected_files:
                         if any(fnmatch(reltive_file_path, pattern) for pattern in exclude):
                             collected_files.remove(filepath)
+                if filepath in collected_files:
+                    print "Found ", reltive_file_path
         collected_files.sort()
         return collected_files
 
