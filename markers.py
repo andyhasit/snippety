@@ -42,7 +42,8 @@ class IteratorMarker(StandardMarker):
 
     def transform_line(self, line, element):
         new_line = line.replace(self._marker_text, str(self._count))
-        self._count += 1
+        if line.find(self._marker_text) >= 0:
+            self._count += 1
         return new_line
 
 
