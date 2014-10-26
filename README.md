@@ -1,9 +1,9 @@
 Snippety
 =========
 
-Snippety generates reptitive snippets of code and inserts them back into your source file. It does so using very simple __directives__ in your comments, and uses your existing source code as template - a code generator that runs from inside your source files!
+Snippety is a code repeater/generator which you can use directly from your source files. Simply place __directives__ in your comments, which demark the lines of code you want to repeat, and specify what to change. 
 
-##Motivation
+##How it works
 We sometimes end up writting a lot of code like this:
 ``` python
 def constructor(record as DataRecord):
@@ -17,6 +17,7 @@ There are ways round this using reflection or structuring your classes different
 With Snippety you just write the first snippet that repeats, and add a __snippety directive__ in your comments, either inline as in this example or by wrapping multiple lines.
 
 ``` python
+def constructor(record as DataRecord):
     self.name = record.GetValue('name') #sn_i [name] age height weight
 ```
 
@@ -24,6 +25,7 @@ This directive effectively states: for x in __age height weight__: copy the snip
 Running the file through Snippety will result in this:
 
 ``` python
+def constructor(record as DataRecord):
     self.name = record.GetValue('name') #sn_i [name] age height weight
     self.age = record.GetValue('age')               #generated_code
     self.height = record.GetValue('height')         #generated_code
