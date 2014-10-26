@@ -1,38 +1,39 @@
 Snippety
 =========
 
-Snippety generates reptitive chunks of code and inserts them back into your source file. It does so using very simple __directives__ in your comments, and uses your existing source code as template - a code generator that runs from inside your source files!
+Snippety generates reptitive snippets of code and inserts them back into your source file. It does so using very simple __directives__ in your comments, and uses your existing source code as template - a code generator that runs from inside your source files!
 
 ##Motivation
 We sometimes end up writting a lot of code like this:
 ``` python
 def constructor(record as DataRecord):
-    self.first_name = record.GetValue('first_name')
-    self.last_name = record.GetValue('last_name')
+    self.name = record.GetValue('name')
     self.age = record.GetValue('age')
     self.height = record.GetValue('height')
+    self.weight = record.GetValue('weight')
 ```
-There are ways round this using reflection, or structuring your classes differently, but you may not have the time (or skill) to implement that.
+There are ways round this using reflection or structuring your classes differently, but in some cases that's not a viable option (not enough time/skill, or even performance issues) and you just wish you could treat your code like text with a __for__ loop.
 
-With Snippety you just write the first chunk that repeats, and add a directive indicating what to replace (this example shows an inline directive, but you can equally wrap multiple lines).
+With Snippety you just write the first snippet that repeats, and add a __snippety directive__ in your comments, either inline as in this example or by wrapping multiple lines.
 
 ``` python
-    self.first_name = record.GetValue('first_name') #sn_i [first_name] last_name age height weight
+    self.name = record.GetValue('name') #sn_i [name] age height weight
 ```
 
+This directive effectively states: for x in __age height weight__: copy the snippet and replace __name__ with x.
 Running the file through Snippety will result in this:
 
 ``` python
-    self.first_name = record.GetValue('first_name') #sn_i last_name age height weight
-    self.last_name = record.GetValue('last_name')   #generated_code
+    self.name = record.GetValue('name') #sn_i [name] age height weight
     self.age = record.GetValue('age')               #generated_code
     self.height = record.GetValue('height')         #generated_code
+    self.weight = record.GetValue('weight')         #generated_code
 ```
 
 #####Good to know:
  
- * Snippety regenerates the lines each time, so you only need to change the source line.
- * You can have multi-line chunks, and even nested chunks within those!
+ * Snippety regenerates the lines each time it is run, so you only need to change the original snippet.
+ * You can have multi-line snippet, and even nested chunks within those!
  * You can direct the output to another file.
  * You can use key-value collections defined in a config file instead.
  * You can apply conditional statements (repeat for all elements if)
