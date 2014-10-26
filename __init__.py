@@ -1,26 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Snippety repeats chunks of text
-
- text below your text directives in your source code.
-
-So wrapping our "Piggie..." line with the start and end directives gives
-
-#sn_start [food, x*1] eggs spam spam bacon
-        Piggie x has food
-#sn_end
-
-Gives:
-
-        Piggie 1 has eggs
-        Piggie 2 has spam
-        Piggie 3 has spam
-        Piggie 4 has bacon
-
-Idea is that the config file only specifies the models and config.
-
-
-http://pytest.org/latest/getting-started.html
+Snippety repeats chunks of text.
 
 To Do:
 
