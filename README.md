@@ -7,11 +7,15 @@ Snippety generates code inside your code from your code.
 <img src="yodawg.jpg" width="400">
 </p>
 
+<<<<<<< HEAD
 ## What does it do?
 
 Sometime end up with code like below.
 
 (_You could solve this particular example with **getattr()** and **setattr()** because it's Python, but this is just an illustration. Snippety works on any text files_)
+=======
+###Wait......it does what?
+>>>>>>> c76d26b73c6040d5ebfcfd096a41cc8502947073
 
 ``` python
 def __init__(self, dataRow):
@@ -20,8 +24,15 @@ def __init__(self, dataRow):
     self._age = dataRow.age
     self._height = dataRow.height
     self._weight = dataRow.weight
+<<<<<<< HEAD
     print "created ", self.name
 ```
+=======
+    # Evil duplication...
+    print "created ", self.name
+```
+(_You could solve this particular example with **getattr()** and **setattr()** because it's Python, but this is just an example for illustration. Snippety works on any text files_)
+>>>>>>> c76d26b73c6040d5ebfcfd096a41cc8502947073
 
 With Snippety, you place a directive (in a comment) on the line you want to repeat:
 
@@ -43,6 +54,7 @@ def __init__(self, dataRow):
 ```
 
 Most IDEs load your buffer when the file is changed externally, so it refreshes like magic.
+<<<<<<< HEAD
 
 The **#generated_code** comments are for Snippety to track which lines it generated, so that if you change the directive or source line, it wipes and rebuilds those.
 
@@ -65,6 +77,35 @@ There are tools like [cog](http://nedbatchelder.com/code/cog/) which is far more
  * You can use collections defined in a config file instead of typing out each item in the directive
  * You can apply conditional statements (repeat for all elements if)
 
+=======
+
+The **#generated_code** comments are for Snippety to track which lines it generated, so that if you change the directive or source line, it wipes and rebuilds those.
+
+###Why is this special?
+
+__A)__ Because you create the instructions to generate new lines of code **right from inside** your code. No need to open up an external tool. 
+
+__B)__ It is dynamic, so if you change your directive and re-run Snippety, it updates your files, removing its own generated lines and replacing them with the new code.
+
+
+__C)__ , multi-line blocks, and you can subclass and write your own.
+
+You can also load lists (of say fields) from a config file.
+
+You can run it as a tool from the terminal, or by importing into a Python script.
+
+### Other goodies:
+ * Snippety can be run as a tool, or imported into a python script.
+ * There's an easy enumeration [0, 1, 2...] feature
+ * There's intelligent capitalsation handling
+ * These come from Snippety's **directives** and you can easily subclass and create your own.
+ * Snippety regenerates the lines each time it is run, so you only need to change the original snippet.
+ * You can have multi-line snippet, and even nested chunks within those!
+ * You can direct the output to another file.
+ * You can use collections defined in a config file instead of typing out each item in the directive
+ * You can apply conditional statements (repeat for all elements if)
+
+>>>>>>> c76d26b73c6040d5ebfcfd096a41cc8502947073
 
 Here's an example using enumeration, and showing a directive with start (__sn_s__) and end (__sn_e__) directives as opposed to the inline (__sn_i__) shown above.
 
@@ -79,7 +120,11 @@ def __init__(self, dataRow):
     print "created ", self.name
 ```
 
+<<<<<<< HEAD
 ## Important information:
+=======
+##Important information:
+>>>>>>> c76d26b73c6040d5ebfcfd096a41cc8502947073
 
 Snippety replaces the contents of the file you're actually working on, so make sure your Editor/IDE tells you when the underlying file contents have changed (most do). 
 
