@@ -7,7 +7,7 @@ Snippety generates code inside your code from your code.
 <img src="yodawg.jpg" width="400">
 </p>
 
-### What does it do?
+## What does it do?
 
 Sometime end up with code like below.
 
@@ -79,16 +79,15 @@ def __init__(self, dataRow):
     print "created ", self.name
 ```
 
-##Important information:
+## Important information:
 
-Snippety replaces the contents of the file you're actually working on, so make sure your IDE tells you when the underlying file contents have changed (most do). 
+Snippety replaces the contents of the file you're actually working on, so make sure your Editor/IDE tells you when the underlying file contents have changed (most do). 
 
-__THERFORE YOU MUST REMEMBER TO SAVE YOUR FILES BEFORE RUNNING SNIPPETY OVER THEM!__
-
+__YOU MUST REMEMBER TO SAVE YOUR FILES BEFORE RUNNING SNIPPETY OVER THEM!__
 
 Alternatively you can tell Snippety to output to a different location, leaving your source files untouched.
 
-##How to use it
+## Usage
 
 
 Here's a simple example you can run with minimal setup:
@@ -130,12 +129,14 @@ sn.process_dir('.')
 ```
 Look into the source code and unit tests to get an idea of what directives are working and available.
 
+Remember, Snippety overwrites files, so make sure you understand what you are doing.
+
 ## Development
 
   * Snippety uses [pytest](http://pytest.org/latest/) for it's unit tests, and there's a fair amount of test that pass, but could do with more edge-case testing.
   * Stick to [Python Style Guide](http://legacy.python.org/dev/peps/pep-0008/)
   * Make sure the code is compatible with Python 2.7.
 
-##Questions:
+## Questions:
 
 Email me at andyhasit@gmail.com.
